@@ -6,6 +6,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import api from '@/api/test'
 
 export default {
   name: 'Dashboard',
@@ -13,6 +14,11 @@ export default {
     ...mapGetters([
       'name'
     ])
+  },
+  created(){
+    api.test().then(res=>{
+      console.log(res)
+    })
   }
 }
 </script>

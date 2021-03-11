@@ -27,7 +27,8 @@ module.exports = {
   publicPath: '/',
   outputDir: 'dist',
   assetsDir: 'static',
-  lintOnSave: process.env.NODE_ENV === 'development',
+  // lintOnSave: process.env.NODE_ENV === 'development',
+  lintOnSave: false,
   productionSourceMap: false,
   devServer: {
     port: port,
@@ -36,7 +37,18 @@ module.exports = {
       warnings: false,
       errors: true
     },
-    before: require('./mock/mock-server.js')
+    before: require('./mock/mock-server.js'),
+    proxy: {
+      [process.env.VUE_APP_BASE_API]: { // 是.env.development 文件的'/dev-api':
+        // 目标服务器地址
+        target: 'https://mock.mengxuegu.com/mock/6049f7b2f340b05bceda3e49/blog-admin',
+        changeOrigin: true, // 开启代理服务器，
+        pathRewrite: {
+          // '^/dev-api': '',
+          ['^' + process.env.VUE_APP_BASE_API]: ''
+        }
+      }
+    }
   },
   configureWebpack: {
     // provide the app's title in webpack's name field, so that
@@ -87,7 +99,7 @@ module.exports = {
             .plugin('ScriptExtHtmlWebpackPlugin')
             .after('html')
             .use('script-ext-html-webpack-plugin', [{
-            // `runtime` must same as runtimeChunk name. default is `runtime`
+              // `runtime` must same as runtimeChunk name. default is `runtime`
               inline: /runtime\..*\.js$/
             }])
             .end()
@@ -119,5 +131,5 @@ module.exports = {
           config.optimization.runtimeChunk('single')
         }
       )
-  }
+  },
 }
